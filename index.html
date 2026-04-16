@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FocusFlow</title>
+   
+  <!-- MAIN POCKETFLOW CSS -->
+    <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/note.css">
+    <link rel="stylesheet" href="css/Calc.css">
+
+</head>
+<body>
+<div id="bg-overlay"></div>
+<!-- Background Customizer Button -->
+<button id="bg-customizer-btn">🎨</button>
+
+
+<!-- Background Customizer Popup -->
+<div id="bg-customizer-popup">
+    <!-- JS will fill this panel dynamically -->
+</div>
+<div class="main-layout">
+
+<div class="app-card">
+
+    <!-- HEADER -->
+    <div class="app-header">
+        <h2>PocketFlow</h2>
+    </div>
+
+    <!-- TOP MENU -->
+    <div class="top-menu">
+        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="add">Add Transaction</button>
+       <button class="nav-btn" data-page="accounts">Accounts</button>
+        <button class="nav-btn" data-page="alter">Edit Data</button>
+<button class="nav-btn" data-page="categories">Categories</button>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="app-content">
+
+       <!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page active">
+
+    <div class="page-header">
+        <h1>Dashboard</h1>
+        <button id="btnDashRefresh" class="glass-button-small">⟳</button>
+ <button id="dashPeriod">🗓️</button>
+
+    </div>
+
+    <div class="dashboard-row">
+
+        <!-- BALANCES CARD -->
+        <div class="dashboard-card">
+
+            <!-- NEW HEADER LAYOUT -->
+           <div class="dashboard-card-header">
+
+    <!-- LEFT SIDE: TITLE + DATE FILTER -->
+  <div class="header-top">
+        <span class="balance-title">Balances</span>
+
+        <div class="header-right">
+            <button id="btnDashConsolidated" class="toggle-button">Consolidated</button>
+            <button id="btnDashDetailed" class="toggle-button">Detailed</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- RIGHT SIDE: MODE BUTTONS + REFRESH -->
+  
+
+            <!-- BODY -->
+            <div class="dashboard-card-body">
+
+                <!-- LEFT: HIERARCHY PANEL -->
+                <div id="balancesHierarchy" class="hierarchy-panel"></div>
+
+                <!-- RIGHT: SUMMARY PANEL -->
+                <div id="balancesSummary" class="balances-summary"></div>
+
+            </div>
+        </div>
+
+    <!-- BUDGET CARD -->
+<div class="dashboard-card">
+
+    <div class="dashboard-card-header">
+
+        <div class="header-top-budget">
+            <span class="balance-title">Budget</span>
+
+            <div class="header-right">
+                <button id="btnBudgetMatrix" class="toggle-button">Budget Matrix</button>
+                <button id="btnBudgetMore" class="toggle-button">More</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dashboard-card-body">
+       <!-- Inside your existing Budget card on the Dashboard -->
+<div id="budget-card" class="budget-card">
+  <div class="budget-card-header">
+    <div class="budget-card-title">Budget details</div>
+    <div class="budget-card-period" id="budget-card-period">March 2026</div>
+  </div>
+
+  <div class="budget-card-section">
+    <div class="budget-card-section-title">Running</div>
+    <div class="budget-card-week-row" id="budget-week-1"></div>
+    <div class="budget-card-week-row" id="budget-week-2"></div>
+    <div class="budget-card-week-row" id="budget-week-3"></div>
+    <div class="budget-card-week-row" id="budget-week-4"></div>
+  </div>
+
+  <div class="budget-card-section">
+    <div class="budget-card-section-title">Monthly</div>
+    <div class="budget-card-month-row" id="budget-month-1"></div>
+    <div class="budget-card-month-row" id="budget-month-2"></div>
+    <div class="budget-card-month-row" id="budget-month-3"></div>
+  </div>
+
+  <div class="budget-card-section">
+    <div class="budget-card-section-title">Weekly performance</div>
+    <canvas id="budget-weekly-chart" width="400" height="160"></canvas>
+  </div>
+</div>
+    </div>
+
+</div>
+
+<!-- BUDGET MATRIX POPUP -->
+<div id="budgetMatrixOverlay" class="budget-overlay" style="display:none;">
+    <div id="budgetMatrixPopup" class="budget-popup-large">
+
+        <!-- HEADER -->
+        <div class="budget-header-excel">
+            <div class="header-left">
+                <span class="icon">📊</span>
+                <span class="header-title">Monthly Budget Matrix</span>
+
+            </div>
+
+            <div class="header-right">
+                <label class="month-label">Month</label>
+                <input type="month" id="bmMonthSelector" class="month-input">
+            <button id="bmCancel" class="bm-btn-outline">Close</button>
+            <button id="bmEditSave" class="bm-btn-primary">Edit</button>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="budget-body-clean">
+
+            <!-- ========================= -->
+            <!-- 1. MONTHLY SUMMARY -->
+            <!-- ========================= -->
+          <!-- ========================= -->
+<!-- 1. INCOME DETAILS -->
+<!-- ========================= -->
+<div class="bm-section">
+    <h3 class="bm-section-title">Income Details</h3>
+
+    <table class="bm-table bm-equal-cols">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Expected</th>
+                <th>Acquired</th>
+                <th>Diff</th>
+            </tr>
+        </thead>
+
+        <tbody id="bmMonthlySummary">
+
+            <!-- Income (AUTO) -->
+            <tr>
+                <td><strong>Income</strong></td>
+                <td id="incExp"></td>
+                <td id="incAct"></td>
+                <td id="incDiff" class="bm-diff"></td>
+            </tr>
+
+            <!-- Week 1 (MANUAL) -->
+            <tr>
+                <td>Week 1</td>
+                <td><input id="w1Exp" type="number" class="bm-input bm-no-arrows"></td>
+                <td><input id="w1Act" type="number" class="bm-input bm-no-arrows"></td>
+                <td id="w1Diff" class="bm-diff"></td>
+            </tr>
+
+            <!-- Week 2 (MANUAL) -->
+            <tr>
+                <td>Week 2</td>
+                <td><input id="w2Exp" type="number" class="bm-input bm-no-arrows"></td>
+                <td><input id="w2Act" type="number" class="bm-input bm-no-arrows"></td>
+                <td id="w2Diff" class="bm-diff"></td>
+            </tr>
+
+            <!-- Week 3 (MANUAL) -->
+            <tr>
+                <td>Week 3</td>
+                <td><input id="w3Exp" type="number" class="bm-input bm-no-arrows"></td>
+                <td><input id="w3Act" type="number" class="bm-input bm-no-arrows"></td>
+                <td id="w3Diff" class="bm-diff"></td>
+            </tr>
+
+            <!-- Week 4 (MANUAL) -->
+            <tr>
+                <td>Week 4</td>
+                <td><input id="w4Exp" type="number" class="bm-input bm-no-arrows"></td>
+                <td><input id="w4Act" type="number" class="bm-input bm-no-arrows"></td>
+                <td id="w4Diff" class="bm-diff"></td>
+            </tr>
+
+            <!-- Other (MANUAL) -->
+            <tr>
+                <td>Other</td>
+                <td><input id="othExp" type="number" class="bm-input bm-no-arrows"></td>
+                <td><input id="othAct" type="number" class="bm-input bm-no-arrows"></td>
+                <td id="othDiff" class="bm-diff"></td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<!-- ========================= -->
+<!-- 2. MONTHLY FIXED EXPENSES -->
+<!-- ========================= -->
+<div class="bm-section">
+    <h3 class="bm-section-title">Monthly Fixed Expenses</h3>
+
+    <div class="bm-flex-row">
+        <table class="bm-table bm-fixed-table">
+            <thead>
+                <tr>
+                    <th>Expense</th>
+                    <th>Amount</th>
+                    <th class="bm-action-col"></th>
+                </tr>
+            </thead>
+
+            <tbody id="bmFixedBody">
+                <tr>
+                    <td>
+                        <select class="bm-input bm-expense-dropdown"></select>
+                    </td>
+                    <td>
+                        <input type="number" class="bm-input bm-no-arrows bm-fixed-amount">
+                    </td>
+                    <td class="bm-action"></td>
+                </tr>
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td><strong>Total Monthly Fixed Expenses</strong></td>
+                    <td id="bmFixedTotal"></td>
+
+                    <!-- Add button in 3rd column -->
+                    <td class="bm-action">
+                        <button id="bmAddFixed" class="bm-add-btn">➕</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+                       <!-- ========================= -->
+            <!-- 3. WEEKLY EXPENSES – 4 TABLES STACKED -->
+            <!-- ========================= -->
+            <div class="bm-section">
+                <h3 class="bm-section-title">Weekly Expenses</h3>
+
+                <div class="bm-week-stack">
+
+                    <!-- WEEK 1 -->
+                    <div class="bm-week-block">
+                        <div class="bm-week-title">Week 1</div>
+                        <div class="bm-flex-row">
+                            <table class="bm-table bm-weekly-table" id="bmWeeklyTableW1">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Expected</th>
+                                        <th>Acquired</th>
+                                        <th>Monthly</th>
+                                        <th>Diff</th>
+                                        <th class="bm-action-col"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="bmWeeklyBodyW1">
+                                    <tr>
+                                        <td>
+                                            <select class="bm-input bm-expense-dropdown"></select>
+                                        </td>
+                                        <td class="bm-week-exp"></td>
+                                        <td class="bm-week-act"></td>
+                                        <td>
+                                            <input type="number" class="bm-input bm-no-arrows bm-week-month">
+                                        </td>
+                                        <td class="bm-diff bm-week-diff"></td>
+                                        <td class="bm-action"></td>
+                                    </tr>
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <td><strong>Total Weekly Expenses</strong></td>
+                                        <td id="bmW1TotExp"></td>
+                                        <td id="bmW1TotAct"></td>
+                                        <td id="bmW1TotMon"></td>
+                                        <td id="bmW1TotDiff"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- WEEK 2 -->
+                    <div class="bm-week-block">
+                        <div class="bm-week-title">Week 2</div>
+                        <div class="bm-flex-row">
+                            <table class="bm-table bm-weekly-table" id="bmWeeklyTableW2">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Expected</th>
+                                        <th>Acquired</th>
+                                        <th>Monthly</th>
+                                        <th>Diff</th>
+                                        <th class="bm-action-col"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="bmWeeklyBodyW2">
+                                    <tr>
+                                        <td>
+                                            <select class="bm-input bm-expense-dropdown"></select>
+                                        </td>
+                                        <td class="bm-week-exp"></td>
+                                        <td class="bm-week-act"></td>
+                                        <td>
+                                            <input type="number" class="bm-input bm-no-arrows bm-week-month">
+                                        </td>
+                                        <td class="bm-diff bm-week-diff"></td>
+                                        <td class="bm-action"></td>
+                                    </tr>
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <td><strong>Total Weekly Expenses</strong></td>
+                                        <td id="bmW2TotExp"></td>
+                                        <td id="bmW2TotAct"></td>
+                                        <td id="bmW2TotMon"></td>
+                                        <td id="bmW2TotDiff"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- WEEK 3 -->
+                    <div class="bm-week-block">
+                        <div class="bm-week-title">Week 3</div>
+                        <div class="bm-flex-row">
+                            <table class="bm-table bm-weekly-table" id="bmWeeklyTableW3">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Expected</th>
+                                        <th>Acquired</th>
+                                        <th>Monthly</th>
+                                        <th>Diff</th>
+                                        <th class="bm-action-col"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="bmWeeklyBodyW3">
+                                    <tr>
+                                        <td>
+                                            <select class="bm-input bm-expense-dropdown"></select>
+                                        </td>
+                                        <td class="bm-week-exp"></td>
+                                        <td class="bm-week-act"></td>
+                                        <td>
+                                            <input type="number" class="bm-input bm-no-arrows bm-week-month">
+                                        </td>
+                                        <td class="bm-diff bm-week-diff"></td>
+                                        <td class="bm-action"></td>
+                                    </tr>
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <td><strong>Total Weekly Expenses</strong></td>
+                                        <td id="bmW3TotExp"></td>
+                                        <td id="bmW3TotAct"></td>
+                                        <td id="bmW3TotMon"></td>
+                                        <td id="bmW3TotDiff"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- WEEK 4 -->
+                    <div class="bm-week-block">
+                        <div class="bm-week-title">Week 4</div>
+                        <div class="bm-flex-row">
+                            <table class="bm-table bm-weekly-table" id="bmWeeklyTableW4">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Expected</th>
+                                        <th>Acquired</th>
+                                        <th>Monthly</th>
+                                        <th>Diff</th>
+                                        <th class="bm-action-col"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="bmWeeklyBodyW4">
+                                    <tr>
+                                        <td>
+                                            <select class="bm-input bm-expense-dropdown"></select>
+                                        </td>
+                                        <td class="bm-week-exp"></td>
+                                        <td class="bm-week-act"></td>
+                                        <td>
+                                            <input type="number" class="bm-input bm-no-arrows bm-week-month">
+                                        </td>
+                                        <td class="bm-diff bm-week-diff"></td>
+                                        <td class="bm-action"></td>
+                                    </tr>
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <td><strong>Total Weekly Expenses</strong></td>
+                                        <td id="bmW4TotExp"></td>
+                                        <td id="bmW4TotAct"></td>
+                                        <td id="bmW4TotMon"></td>
+                                        <td id="bmW4TotDiff"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+              
+        </div>
+
+    </div>
+</div>
+   </div>
+</div>
+<!-- Budget History Overlay -->
+<div id="budgetHistoryOverlay" class="budget-overlay" style="display:none;">
+  <div class="budget-history-popup" role="dialog" aria-modal="true" aria-label="Budget History">
+    <div class="budget-history-header" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="icon">📚</span>
+        <strong>Budget History</strong>
+      </div>
+      <div>
+        <button id="budgetHistoryClose" class="bm-btn-outline">Close</button>
+      </div>
+    </div>
+
+    <div id="budgetHistoryBody" class="budget-history-body" style="overflow:auto; max-height:520px; padding:12px;"></div>
+
+    <div class="budget-history-footer" style="padding:8px 12px; text-align:center;">
+      <button id="budgetHistoryLoadMore" class="bm-btn-outline">Load more months</button>
+    </div>
+  </div>
+ </div>       <!-- ADD TRANSACTION PAGE -->
+        <div id="page-add" class="page">
+            <h1>Add Transaction</h1>
+
+            <div class="form-card">
+
+                <!-- DATE -->
+                <div class="form-group">
+                    <label>Date</label>
+                   <div class="inline-group">
+    <input type="text" id="txtDate" class="input" placeholder="dd-mm-yyyy">
+
+    <!-- Hidden real date picker -->
+    <input type="date" id="realDatePicker" style="display:none;">
+
+    <!-- Calendar button -->
+    <button id="btnCalendar" class="btn btn-secondary">📅</button>
+
+    <button id="btnToday" class="btn btn-secondary">Today</button>
+</div>
+                </div>
+
+                <!-- AMOUNT -->
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="text" id="txtAmount" class="input" placeholder="0.00">
+                </div>
+
+                <!-- HEAD -->
+                <div class="form-group">
+                    <label>Under</label>
+                    <select id="cmbUnder" class="input" required>
+<option value="" disabled selected>Head of Exp</option>
+</select>
+                </div>
+
+                <!-- NOTES -->
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="txtNotes" class="input textarea" rows="3" placeholder="Type Description here..."></textarea>
+                </div>
+
+<!-- LAST 5 TRANSACTIONS (MINIMAL) -->
+<div id="lastFiveList" style="margin-top: 20px;"></div>
+
+
+                <!-- BUTTON ROW -->
+                <div class="btn-row">
+                    <button id="btnCancel" class="btn btn-outline">Cancel</button>
+                    <button id="btnClear" class="btn btn-outline">Clear</button>
+                    <button id="btnSave" class="btn btn-save">Save</button>
+                </div>
+
+            </div>
+        </div>
+
+        
+<!-- Accounts Page -->
+<div id="page-accounts" class="page">
+
+    <h1>Accounts</h1>
+
+   <div class="btn-group" style="margin-bottom: 1rem;">
+    <button id="btnViewAccounts" class="btn btn-primary btn-glass">View Accounts</button>
+    <button id="btnVARefresh" class="btn btn-secondary btn-glass">Refresh</button>
+</div>
+
+<!-- View Account Popup -->
+<div id="viewAccountOverlay" class="overlay" style="display:none;">
+
+    <div class="popup-card">
+
+        <!-- Header -->
+        <div class="popup-header">
+            <span class="icon">📄</span>
+            View Account Statement
+        </div>
+
+        <!-- Body -->
+        <div class="popup-body">
+
+            <div class="form-group">
+                <label for="vaDateFrom">From</label>
+                <input type="date" id="vaDateFrom">
+            </div>
+
+            <div class="form-group">
+                <label for="vaDateTo">To</label>
+                <input type="date" id="vaDateTo">
+            </div>
+
+            <div class="form-group">
+                <label for="vaName">Name</label>
+                <select id="vaName">
+                    <option value="">Select name</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="popup-footer">
+            <button id="btnVACancel" class="btn-outline">Cancel</button>
+            <button id="btnVAApply" class="btn-primary">Go</button>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="openingBalanceBar" style="
+    display:none;
+    margin-bottom:10px;
+    text-align:right;
+">
+    <input type="number" id="vaOpeningBalanceTop" 
+           placeholder="Opening Balance"
+           step="0.01"
+           style="padding:6px; width:140px; border-radius:6px; border:1px solid #ccc;">
+    <button id="btnApplyOpeningBalance" class="btn btn-secondary btn-glass">
+        Apply
+    </button>
+</div>
+
+    <!-- Statement Area -->
+    <div id="vaMessage" style="margin-top:0.5rem; color:#888;"></div>
+
+    <div class="table-responsive" style="margin-top:0.5rem;">
+        <table id="vaTable" class="table table-sm table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Sub Category</th>
+                    <th>Head</th>
+                    <th>Amount</th>
+                    <th>Running Balance</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!-- rows from JS -->
+            </tbody>
+                  </table>
+    </div>
+
+    <!-- Head Totals -->
+    <div id="vaHeadTotals" style="margin-top:0.5rem; font-size:0.9rem;">
+        <!-- e.g. TTC Total: 1.00, Uber Total: 1.00 -->
+    </div>
+
+</div><!-- ALTER DATA PAGE -->
+<div id="page-alter" class="page">
+    <h1>Alter Data</h1>
+
+    <!-- FIND BUTTON -->
+    <button id="btnOpenFilter" class="btn btn-secondary btn-glass">Find</button>
+    </button>
+
+    <!-- LABEL ABOVE TABLE -->
+    <div id="alterLabel" class="section-label">
+        Last 50 Transactions
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-container">
+        <table class="txn-table" id="alterTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Sub-Category</th>
+                    <th>Head</th>
+                    <th>Notes</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- FILTER MODAL -->
+<div id="findOverlay">
+    <div class="find-card">
+
+        <div class="find-header">
+            <span class="icon">🔍</span>
+            Find Transactions
+        </div>
+
+        <div class="find-body">
+
+            <div class="find-group">
+                <label>Date From</label>
+                <input type="date" id="fltDateFrom">
+            </div>
+
+            <div class="find-group">
+                <label>Date To</label>
+                <input type="date" id="fltDateTo">
+            </div>
+
+            <div class="find-group">
+                <label>Amount</label>
+                <input type="text" id="fltAmount">
+            </div>
+
+            <div class="find-group">
+                <label>Category</label>
+                <select id="fltCategory"></select>
+            </div>
+
+            <div class="find-group">
+                <label>Sub‑Category</label>
+                <input type="text" id="fltSubCategory">
+            </div>
+
+            <div class="find-group">
+                <label>Head</label>
+                <select id="fltHead"></select>
+            </div>
+
+        </div>
+
+        <div class="find-footer">
+            <button id="btnFilterCancel" class="find-btn-outline">Cancel</button>
+            <button id="btnFilterClear" class="find-btn-outline">Clear</button>
+            <button id="btnFilterApply" class="find-btn-primary">Go</button>
+        </div>
+
+    </div>
+</div>
+        <!-- CATEGORIES PAGE -->
+<!-- CATEGORIES PAGE -->
+<div id="page-categories" class="page">
+    <h1>Categories</h1>
+
+    <!-- ADD BUTTON -->
+    <button id="btnAddCategory" class="btn btn-primary btn-glass">Add New Category</button>
+
+    <!-- ADD CATEGORY POPUP -->
+    <div id="addCategoryOverlay" class="cat-overlay" style="display:none;">
+        <div class="cat-card">
+
+            <div class="cat-header">
+                <span class="icon">➕</span>
+                Add New Category
+            </div>
+
+            <div class="cat-body">
+
+                <!-- CATEGORY -->
+                <div class="cat-group">
+                    <label>Category</label>
+                    <select id="catCategoryPopup">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Expenses">Expenses</option>
+                        <option value="Income">Income</option>
+                        <option value="Saving">Saving</option>
+                        <option value="Reserve">Reserve</option>
+                        <option value="Credit">Credit</option>
+                    </select>
+                </div>
+
+                <!-- SUB-CATEGORY (DROPDOWN + NEW INPUT) -->
+                <div class="cat-group">
+                    <label>Sub‑Category</label>
+
+                    <select id="catSubCategoryPopup">
+                        <option value="" disabled selected>Select Sub‑Category</option>
+                        <option value="__new__">+ Add New Sub‑Category</option>
+                    </select>
+
+                    <input type="text" id="catSubCategoryNew"
+                           style="display:none; margin-top:6px;"
+                           placeholder="Enter new sub‑category">
+                </div>
+
+                <!-- HEAD -->
+                <div class="cat-group">
+                    <label>Head</label>
+                    <input type="text" id="catHeadPopup" placeholder="Enter head (optional)">
+                </div>
+
+                <!-- NOTES -->
+                <div class="cat-group">
+                    <label>Notes</label>
+                    <input type="text" id="catNotesPopup" placeholder="Enter notes (optional)">
+                </div>
+
+            </div>
+
+            <div class="cat-footer">
+                <button id="btnCatCancel" class="cat-btn-outline">Cancel</button>
+                <button id="btnCatSave" class="cat-btn-primary">Save</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-container" style="margin-top:20px;">
+        <table class="txn-table" id="categoryTable">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Sub‑Category</th>
+                    <th>Head</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div> <!-- END page-categories -->
+<div id="statementOverlay" class="statement-overlay">
+    <div class="statement-box">
+        <div class="statement-header">
+            <span id="statementTitle"></span>
+            <button id="statementClose">✖</button>
+        </div>
+
+        <div id="statementBody" class="statement-body"></div>
+    </div>
+</div>
+
+
+<!-- PERIOD POPUP OVERLAY -->
+<div id="periodOverlay" class="period-overlay" style="display:none;">
+    <div class="period-popup">
+
+        <!-- HEADER -->
+        <div class="period-header">
+            <span class="period-title">Select Period</span>
+
+            <div class="period-modes">
+                <button id="modeMonth"  class="period-mode-btn" data-mode="month">Month</button>
+                <button id="modeWeek"   class="period-mode-btn" data-mode="week">Week</button>
+                <button id="modeCustom" class="period-mode-btn" data-mode="custom">Custom</button>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="period-body">
+
+            <!-- MONTH -->
+            <div id="sectionMonth" class="period-section">
+                <label class="period-label">Month</label>
+                <select id="periodMonth" class="period-select"></select>
+            </div>
+
+            <!-- WEEK -->
+            <div id="sectionWeek" class="period-section">
+                <label class="period-label">Week</label>
+                <select id="periodWeek" class="period-select">
+                    <option value="">Full Month</option>
+                </select>
+            </div>
+
+            <!-- CUSTOM -->
+            <div id="sectionCustom" class="period-section">
+                <label class="period-label">From</label>
+                <input type="date" id="periodFrom" class="period-input">
+
+                <label class="period-label">To</label>
+                <input type="date" id="periodTo" class="period-input">
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="period-footer">
+            <button id="periodCancel" class="period-btn secondary">Cancel</button>
+            <button id="periodApply"  class="period-btn primary">Apply</button>
+        </div>
+
+    </div>
+</div>
+
+</div> <!-- END app-content -->
+
+
+</div>
+
+    <!-- ============================================================
+         WRITING PRO — FULL NOTEPAD CARD
+         ============================================================ -->
+    <div class="writingpro-card" id="writingProCard">
+        <div id="wp-app">
+<div id="menuBar">
+                <button onclick="notes.undoAction()">Undo</button>
+                <button onclick="notes.redoAction()">Redo</button>
+                <button onclick="notes.applyHighlight()">Highlight</button>
+                <button onclick="notes.toggleChecklist()">Checklist</button>
+                <button onclick="notes.addPageBreak()">Page Break</button>
+                <button onclick="notes.jumpToPage()">Jump to Page</button>
+                <button onclick="notes.triggerScreenshot()">Add Screenshot</button>
+                <button onclick="notes.toggleFindBar()">Find</button>
+            </div>
+
+            <!-- FIND BAR -->
+            <div id="findBar" class="hidden">
+                <div class="find-row find-row-top">
+                    <input type="text" id="findInput" placeholder="Find...">
+                </div>
+                <div class="find-row find-row-bottom">
+                    <button onclick="notes.performFind()">Find</button>
+                    <button onclick="notes.findPrev()">Prev</button>
+                    <button onclick="notes.findNext()">Next</button>
+                    <span id="findCountLabel">Found 0 results</span>
+                    <button onclick="notes.closeFindBar()" class="find-close-btn">Close</button>
+                </div>
+            </div>
+
+            <!-- DOCUMENT AREA -->
+            <div id="document">
+    <div class="Writing-page">
+        <div class="writing-area" contenteditable="true"></div>
+    </div>
+</div>
+
+            <!-- PAGE FOOTER -->
+            <div id="writingpageFooter">
+                <h3>Pages</h3>
+                <div id="pageList"></div>
+            </div>
+
+        </div>
+    </div>
+<div class="RIGHT">
+<div class="calculator">
+
+    <!-- Mini History -->
+    <div id="mini-history"></div>
+
+    <!-- History Icon -->
+    <div id="history-icon">
+        <img src="Images/history.png" alt="history icon">
+    </div>
+
+    <!-- Calculator Display -->
+    <input type="text" id="display">
+
+    <!-- Calculator Buttons -->
+    <div class="buttons">
+        <button onclick="calc.press('7')">7</button>
+        <button onclick="calc.press('8')">8</button>
+        <button onclick="calc.press('9')">9</button>
+        <button onclick="calc.press('/')">÷</button>
+
+        <button onclick="calc.press('4')">4</button>
+        <button onclick="calc.press('5')">5</button>
+        <button onclick="calc.press('6')">6</button>
+        <button onclick="calc.press('*')">×</button>
+
+        <button onclick="calc.press('1')">1</button>
+        <button onclick="calc.press('2')">2</button>
+        <button onclick="calc.press('3')">3</button>
+        <button onclick="calc.press('-')">−</button>
+
+        <button onclick="calc.press('0')">0</button>
+        <button onclick="calc.press('.')">.</button>
+        <button onclick="calc.calculate()">=</button>
+        <button onclick="calc.press('+')">+</button>
+
+        <button class="clear" onclick="calc.clearDisplay()">C</button>
+        <button class="backspace" onclick="calc.backspace()">⌫</button>
+    </div>
+</div>
+
+
+<!-- ============================================================
+     HISTORY DRAWER
+     ============================================================ -->
+
+<div id="history-drawer">
+    <div class="drawer-header">
+        <h3>Full History</h3>
+        <button id="close-history">×</button>
+    </div>
+
+    <button id="delete-history">Delete History</button>
+
+    <div id="full-history"></div>
+</div>
+
+
+<!-- ============================================================
+     CLOCK (GLASS CARD)
+     ============================================================ -->
+
+<div class="clock-box">
+    <div id="time">00:00:00</div>
+    <div id="date">Loading date…</div>
+</div>
+
+
+<!-- ============================================================
+     CALENDAR (GLASS CARD)
+     ============================================================ -->
+
+<div class="calendar-box">
+
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+        <button id="prev-month">◀</button>
+        <div id="month-year">Month Year</div>
+        <button id="next-month">▶</button>
+    </div>
+
+    <!-- Weekday Row -->
+    <div class="weekday-row">
+        <div>S</div>
+        <div>M</div>
+        <div>T</div>
+        <div>W</div>
+        <div>T</div>
+        <div>F</div>
+        <div>S</div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div id="calendar" class="calendar-grid"></div>
+
+</div>
+</div>
+
+           
+ </div>
+</div>
+</div>
+<input type="file" id="screenshotInput" accept="image/*" style="display:none">
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const pages = document.querySelectorAll(".page");
+
+    navButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+
+            navButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            pages.forEach(p => p.classList.remove("active"));
+
+            const pageId = "page-" + btn.dataset.page;
+            document.getElementById(pageId).classList.add("active");
+        });
+    });
+});
+</script>
+
+<!-- JS FILES -->
+<script src="JS/dashboard.js"></script>
+<script src="JS/budgetCard.js"></script>
+<script src="JS/period.js"></script>
+<script src="JS/acquiredEngine.js"></script>
+<script src="JS/budget.js"></script>
+<script src="JS/addTransaction.js"></script>
+<script src="JS/accounts.js"></script>
+<script src="JS/alterData.js"></script>
+<script src="JS/categories.js"></script>
+<script src="JS/script-notes.js"></script>
+<script src="JS/appSwitch.js"></script>
+<script src="JS/ToolsEngine.js"></script>
+<script src="JS/BackgroundEngine.js"></script>
+
+</body>
+</html>
